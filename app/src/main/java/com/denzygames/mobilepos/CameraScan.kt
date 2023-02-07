@@ -3,11 +3,10 @@ package com.denzygames.mobilepos
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.camera.camera2.internal.annotation.CameraExecutor
+import  androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED
+import androidx.camera.mlkit.vision.MlKitAnalyzer
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.denzygames.mobilepos.databinding.ActivityCameraScanBinding
 import com.google.mlkit.vision.barcode.BarcodeScanner
@@ -43,10 +42,30 @@ class CameraScan : AppCompatActivity() {
             .build()
 
         barcodeScanner = BarcodeScanning.getClient(options)
-//        cameraController.setImageAnalysisAnalyzer(
-//            ContextCompat.getMainExecutor(this),
-//            ...
-//        )
+        cameraController.setImageAnalysisAnalyzer(
+            ContextCompat.getMainExecutor(this),
+            MlKitAnalyzer(
+                listOf(barcodeScanner),
+                COORDINATE_SYSTEM_VIEW_REFERENCED,
+                ContextCompat.getMainExecutor(this))
+            { result: MlKitAnalyzer.Result? ->
+                val codeResult = result?.getValue(barcodeScanner)
+                if(codeResult == null || codeResult.size == 0 || codeResult.first() == null)
+                {
+                    preview.overlay.clear()
+                    return@MlKitAnalyzer
+                }
+
+                val model = CodeViewModel(codeResult[0])
+                val drawable = CodeDrawable(model)
+                preview.overlay.clear()
+                preview.overlay.add(drawable)
+
+                runOnUiThread {
+                    viewBinding.textView.text = codeResult[0].rawValue.toString()
+                }
+            }
+        )
         cameraController.bindToLifecycle(this)
         preview.controller = cameraController
     }
