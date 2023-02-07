@@ -11,10 +11,10 @@ import com.denzygames.mobilepos.databinding.ActivityProductsBinding
 @Entity
 data class Product(
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = "ProductName") val productName: String?,
-    @ColumnInfo(name = "ProductPrice") val productPrice: Int?,
-    @ColumnInfo(name = "ProductStock") val productStock: Int?,
-    @ColumnInfo(name = "ProductCode") val productCode: String?,
+    @ColumnInfo(name = "ProductName") var productName: String?,
+    @ColumnInfo(name = "ProductPrice") var productPrice: Int?,
+    @ColumnInfo(name = "ProductStock") var productStock: Int?,
+    @ColumnInfo(name = "ProductCode") var productCode: String?,
 )
 
 /* DB access object that abstacts low level queries */
@@ -27,7 +27,10 @@ interface ProductDao{
     fun getProductByID(id: Int): Product
 
     @Insert
-    fun inserProduct(product: Product)
+    fun insertProduct(product: Product)
+
+    @Update
+    fun updateProduct(product: Product)
 
     @Delete
     fun delele(product: Product)
@@ -67,7 +70,7 @@ class Products : AppCompatActivity() {
                 viewBinding.etPrice.text.toString().toInt(),
                 viewBinding.etStock.text.toString().toInt(),
                 viewBinding.tvCodeStr.text.toString())
-            db.productDao().inserProduct(product)
+            db.productDao().insertProduct(product)
             Toast.makeText(this, "productName:${product.productName}, " +
                     "productPrice:${product.productPrice}, " +
                     "productStock:${product.productStock}, " +
@@ -75,6 +78,17 @@ class Products : AppCompatActivity() {
             currentID = db.productDao().getProducts().size
             updateUIWithCurrentProduct()
         }
+
+        viewBinding.btSave.setOnClickListener{
+            val product = db.productDao().getProductByID(currentID)
+            product.productName = viewBinding.etName.text.toString()
+            product.productStock = viewBinding.etStock.text.toString().toInt()
+            product.productPrice = viewBinding.etPrice.text.toString().toInt()
+            product.productCode = viewBinding.tvCodeStr.text.toString()
+            db.productDao().updateProduct(product)
+            Toast.makeText(this, "SAVE SUCCESS!",Toast.LENGTH_SHORT).show()
+        }
+
 
         viewBinding.btNext.setOnClickListener{
             if(db.productDao().getProducts().size.toInt() > 0){
@@ -98,5 +112,7 @@ class Products : AppCompatActivity() {
                 Toast.makeText(this,"No products saved!", Toast.LENGTH_SHORT).show()
             }
         }
+
+
     }
 }
