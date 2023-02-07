@@ -1,5 +1,6 @@
 package com.denzygames.mobilepos
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -113,6 +114,9 @@ class Products : AppCompatActivity() {
             }
         }
 
-
+        viewBinding.btScan.setOnClickListener{
+            val intent = Intent(it.context, CameraScan::class.java)
+            startActivity(intent)
+        }
     }
 }
