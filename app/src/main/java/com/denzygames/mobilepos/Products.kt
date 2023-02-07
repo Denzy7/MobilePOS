@@ -1,10 +1,15 @@
 package com.denzygames.mobilepos
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.room.*
 import com.denzygames.mobilepos.databinding.ActivityProductsBinding
 
@@ -38,8 +43,40 @@ interface ProductDao{
 }
 
 class Products : AppCompatActivity() {
+
+    companion object
+    {
+        private val NEEDED_PERMISSIONS =
+            mutableListOf(
+                android.Manifest.permission.CAMERA
+            ).toTypedArray()
+        private  const val REQUEST_CODE = 0x07
+    }
+
     private lateinit var viewBinding: ActivityProductsBinding
     private var currentID: Int = 1
+
+    fun permissionCameraGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(baseContext, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun needCameraPermissionDialog()
+    {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.activity_camera_scan_camera_permdialog_title)
+        builder.setMessage(R.string.activity_camera_scan_camera_permdialog_message)
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        builder.setPositiveButton("Yes"){ _, _ ->
+            ActivityCompat.requestPermissions(this,
+                NEEDED_PERMISSIONS, REQUEST_CODE)
+        }
+        builder.setNegativeButton("No"){_, _ -> }
+        builder.setNeutralButton("Cancel"){_, _ ->}
+
+        val dialog = builder.create()
+        dialog.setCancelable(true)
+        dialog.show()
+    }
 
     fun updateUIWithCurrentProduct(){
         val products = MobilePOSDb.getDb(applicationContext).productDao()
@@ -52,6 +89,12 @@ class Products : AppCompatActivity() {
 
         viewBinding.btPrevious.isEnabled = currentID != 1
         viewBinding.btNext.isEnabled = currentID != products.getProducts().size
+    }
+
+    fun startCameraScanActivity(context: Context)
+    {
+        val intent = Intent(context, CameraScan::class.java)
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,8 +158,38 @@ class Products : AppCompatActivity() {
         }
 
         viewBinding.btScan.setOnClickListener{
-            val intent = Intent(it.context, CameraScan::class.java)
-            startActivity(intent)
+            if(permissionCameraGranted())
+            {
+                startCameraScanActivity(it.context)
+            }else
+            {
+                needCameraPermissionDialog()
+            }
+
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode)
+        {
+            REQUEST_CODE ->
+            {
+                if((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                {
+                    /* granted */
+                    startCameraScanActivity(baseContext)
+                }else
+                {
+                    /* not granted 😢 */
+                    Toast.makeText(this, "Camera permission has been explicitly denied! Manually grant it in app info",Toast.LENGTH_LONG).show()
+                }
+                return
+            }
         }
     }
 }
