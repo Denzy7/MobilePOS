@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Mobile POS</string>
+    <string name="activity_main_sell">Sell</string>
+    <string name="activity_main_products">Products</string>
+
+    <string name="activity_product_name">Name</string>
+    <string name="activity_product_price">Price</string>
+    <string name="activity_product_stock">Stock</string>
+    <string name="activity_product_code">Code</string>
+    <string name="activity_product_code_scan">Tap to Scan Bar/QR Code</string>
+    <string name="activity_product_add">Add</string>
+    <string name="activity_product_save">Save</string>
+    <string name="activity_product_delete">Delete</string>
+    <string name="activity_product_previous">Previous</string>
+    <string name="activity_product_next">Next</string>
 </resources>
