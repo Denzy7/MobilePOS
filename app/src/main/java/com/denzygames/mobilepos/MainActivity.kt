@@ -16,6 +16,7 @@ abstract class MobilePOSDb: RoomDatabase()
     /*
     we want to initalize the db once
     and access it from other activities
+    ATTRIB: https://stackoverflow.com/questions/54651749/access-room-database-from-service-and-activity
      */
     companion object{
         private var db: MobilePOSDb? = null
