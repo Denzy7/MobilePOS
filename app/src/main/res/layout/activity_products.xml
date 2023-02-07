@@ -106,7 +106,6 @@
             android:id="@+id/tvCodeStr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/activity_product_code"
             android:minHeight="48dp"/>
     </LinearLayout>
 
@@ -175,6 +174,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/activity_product_previous" />
+
+        <TextView
+            android:id="@+id/tvCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_product_count_default"/>
 
         <Button
             android:id="@+id/btNext"

@@ -13,4 +13,5 @@
     <string name="activity_product_delete">Delete</string>
     <string name="activity_product_previous">Previous</string>
     <string name="activity_product_next">Next</string>
+    <string name="activity_product_count_default">0 of 0</string>
 </resources>
