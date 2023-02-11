@@ -67,4 +67,10 @@ dependencies {
     implementation "androidx.camera:camera-view:${camerax_version}"
     implementation 'androidx.camera:camera-mlkit-vision:1.2.0-beta02'
     implementation 'com.google.mlkit:barcode-scanning:17.0.2'
+
+    /* activity & fragment for Activity Result API  */
+    def activity_version = "1.6.1"
+    def fragment_version = "1.5.5"
+    implementation "androidx.activity:activity-ktx:${activity_version}"
+    implementation "androidx.fragment:fragment-ktx:${fragment_version}"
 }

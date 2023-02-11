@@ -1,5 +1,6 @@
 package com.denzygames.mobilepos
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,6 +24,20 @@ data class Product(
     @ColumnInfo(name = "ProductStock") var productStock: Int?,
     @ColumnInfo(name = "ProductCode") var productCode: String?,
 )
+
+class ScanContract : ActivityResultContract<Unit, String?>()
+{
+    override fun createIntent(context: Context, input: Unit): Intent {
+        return Intent(context, CameraScan::class.java)
+    }
+
+    override fun parseResult(resultCode: Int, intent: Intent?): String? {
+        val data = intent?.getStringExtra("ScanResult")
+        return if (resultCode == Activity.RESULT_OK && data != null) data
+        else null
+    }
+
+}
 
 /* DB access object that abstacts low level queries */
 @Dao
@@ -91,12 +107,6 @@ class Products : AppCompatActivity() {
         viewBinding.btNext.isEnabled = currentID != products.getProducts().size
     }
 
-    fun startCameraScanActivity(context: Context)
-    {
-        val intent = Intent(context, CameraScan::class.java)
-        startActivity(intent)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityProductsBinding.inflate(layoutInflater)
@@ -160,13 +170,23 @@ class Products : AppCompatActivity() {
         viewBinding.btScan.setOnClickListener{
             if(permissionCameraGranted())
             {
-                startCameraScanActivity(it.context)
+                startScanContract.launch(Unit)
             }else
             {
                 needCameraPermissionDialog()
             }
 
         }
+    }
+
+    val startScanContract = registerForActivityResult(ScanContract()) { res ->
+        if(res != null){
+            runOnUiThread{
+                viewBinding.tvCodeStr.text = res
+            }
+        }
+        else
+            Toast.makeText(this, "Scan cancelled", Toast.LENGTH_SHORT).show()
     }
 
     override fun onRequestPermissionsResult(
@@ -182,7 +202,7 @@ class Products : AppCompatActivity() {
                 if((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED))
                 {
                     /* granted */
-                    startCameraScanActivity(baseContext)
+                    startScanContract.launch(Unit)
                 }else
                 {
                     /* not granted 😢 */

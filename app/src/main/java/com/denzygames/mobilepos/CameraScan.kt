@@ -1,5 +1,7 @@
 package com.denzygames.mobilepos
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -29,8 +31,17 @@ class CameraScan : AppCompatActivity() {
 
         startCameraScan()
 
+        viewBinding.button.setOnClickListener {
+            val stringRes = viewBinding.textView.text
+            if(stringRes != "")
+            {
+                setResult(Activity.RESULT_OK, Intent().apply {
+                    putExtra("ScanResult", stringRes)
+                })
+                finish()
+            }
+        }
         cameraExecutor = Executors.newSingleThreadExecutor()
-
     }
 
     fun startCameraScan()
