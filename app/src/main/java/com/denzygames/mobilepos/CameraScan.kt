@@ -23,6 +23,7 @@ class CameraScan : AppCompatActivity() {
     private lateinit var viewBinding: ActivityCameraScanBinding
     private lateinit var barcodeScanner: BarcodeScanner
     private lateinit var cameraExecutor: ExecutorService
+    private var retCode: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +33,10 @@ class CameraScan : AppCompatActivity() {
         startCameraScan()
 
         viewBinding.button.setOnClickListener {
-            val stringRes = viewBinding.textView.text
-            if(stringRes != "")
+            if(retCode != "")
             {
                 setResult(Activity.RESULT_OK, Intent().apply {
-                    putExtra("ScanResult", stringRes)
+                    putExtra("ScanResult", retCode)
                 })
                 finish()
             }
@@ -73,7 +73,16 @@ class CameraScan : AppCompatActivity() {
                 preview.overlay.add(drawable)
 
                 runOnUiThread {
-                    viewBinding.textView.text = codeResult[0].rawValue.toString()
+                    val res = codeResult[0].rawValue.toString()
+                    val p: Product? = MobilePOSDb.getDb(applicationContext).productDao().getProductByCode(res)
+                    val str: String
+                    if(p == null)
+                        str = "Unsaved: ${res}"
+                    else
+                        str = "${p.productName}: $res"
+
+                    viewBinding.textView.text = str
+                    retCode = res
                 }
             }
         )
