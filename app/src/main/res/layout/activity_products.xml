@@ -102,10 +102,11 @@
             android:layout_height="wrap_content"
             android:text="@string/activity_product_code" />
 
-        <TextView
-            android:id="@+id/tvCodeStr"
+        <EditText
+            android:id="@+id/etCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ems="10"
             android:minHeight="48dp"/>
     </LinearLayout>
 

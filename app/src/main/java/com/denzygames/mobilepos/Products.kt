@@ -100,7 +100,7 @@ class Products : AppCompatActivity() {
         viewBinding.etName.text = Editable.Factory.getInstance().newEditable(product.productName)
         viewBinding.etPrice.text = Editable.Factory.getInstance().newEditable(product.productPrice.toString())
         viewBinding.etStock.text = Editable.Factory.getInstance().newEditable(product.productStock.toString())
-        viewBinding.tvCodeStr.text = product.productCode
+        viewBinding.etCode.text = Editable.Factory.getInstance().newEditable(product.productCode.toString())
         viewBinding.tvCount.text = "${currentID} of ${products.getProducts().size}"
 
         viewBinding.btPrevious.isEnabled = currentID != 1
@@ -123,7 +123,7 @@ class Products : AppCompatActivity() {
                 viewBinding.etName.text.toString(),
                 viewBinding.etPrice.text.toString().toInt(),
                 viewBinding.etStock.text.toString().toInt(),
-                viewBinding.tvCodeStr.text.toString())
+                viewBinding.etCode.text.toString())
             db.productDao().insertProduct(product)
             Toast.makeText(this, "productName:${product.productName}, " +
                     "productPrice:${product.productPrice}, " +
@@ -138,7 +138,7 @@ class Products : AppCompatActivity() {
             product.productName = viewBinding.etName.text.toString()
             product.productStock = viewBinding.etStock.text.toString().toInt()
             product.productPrice = viewBinding.etPrice.text.toString().toInt()
-            product.productCode = viewBinding.tvCodeStr.text.toString()
+            product.productCode = viewBinding.etCode.text.toString()
             db.productDao().updateProduct(product)
             Toast.makeText(this, "SAVE SUCCESS!",Toast.LENGTH_SHORT).show()
         }
@@ -182,7 +182,7 @@ class Products : AppCompatActivity() {
     val startScanContract = registerForActivityResult(ScanContract()) { res ->
         if(res != null){
             runOnUiThread{
-                viewBinding.tvCodeStr.text = res
+                viewBinding.etCode.text = Editable.Factory.getInstance().newEditable(res)
             }
         }
         else
