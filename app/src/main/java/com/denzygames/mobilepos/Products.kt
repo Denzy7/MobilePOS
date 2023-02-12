@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AlertDialog
@@ -71,6 +72,7 @@ class Products : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityProductsBinding
     private var currentID: Int = 1
+    private var dirty: Boolean = false
 
     fun permissionCameraGranted(): Boolean {
         return ContextCompat.checkSelfPermission(baseContext, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
@@ -92,6 +94,23 @@ class Products : AppCompatActivity() {
         val dialog = builder.create()
         dialog.setCancelable(true)
         dialog.show()
+    }
+
+    fun proceedWithUnsavedChangesDialog(): Boolean
+    {
+        var ret: Boolean = false
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.activity_camera_scan_camera_savedialog_title)
+        builder.setMessage(R.string.activity_camera_scan_camera_savedialog_message)
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        builder.setPositiveButton("Yes"){ _, _ ->
+            ret = true
+        }
+        builder.setNegativeButton("No"){_, _ -> }
+
+        val dialog = builder.create()
+        dialog.show()
+        return ret
     }
 
     fun updateUIWithCurrentProduct(){
@@ -140,11 +159,15 @@ class Products : AppCompatActivity() {
             product.productPrice = viewBinding.etPrice.text.toString().toInt()
             product.productCode = viewBinding.etCode.text.toString()
             db.productDao().updateProduct(product)
+            dirty = false
             Toast.makeText(this, "SAVE SUCCESS!",Toast.LENGTH_SHORT).show()
         }
 
 
         viewBinding.btNext.setOnClickListener{
+            if(dirty && !proceedWithUnsavedChangesDialog())
+                return@setOnClickListener
+
             if(db.productDao().getProducts().size.toInt() > 0){
                 currentID++
                 currentID = currentID.coerceIn(1, db.productDao().getProducts().size.toInt())
@@ -157,6 +180,9 @@ class Products : AppCompatActivity() {
         }
 
         viewBinding.btPrevious.setOnClickListener{
+            if(dirty && !proceedWithUnsavedChangesDialog())
+                return@setOnClickListener
+
             if(db.productDao().getProducts().size.toInt() > 0){
                 currentID--
                 currentID = currentID.coerceIn(1, db.productDao().getProducts().size.toInt())
@@ -175,7 +201,6 @@ class Products : AppCompatActivity() {
             {
                 needCameraPermissionDialog()
             }
-
         }
     }
 
@@ -183,6 +208,7 @@ class Products : AppCompatActivity() {
         if(res != null){
             runOnUiThread{
                 viewBinding.etCode.text = Editable.Factory.getInstance().newEditable(res)
+                dirty = true
             }
         }
         else

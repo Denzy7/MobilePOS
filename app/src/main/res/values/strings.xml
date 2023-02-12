@@ -18,4 +18,7 @@
     <string name="activity_camera_scan_ok">OK</string>
     <string name="activity_camera_scan_camera_permdialog_title">Camera Permission</string>
     <string name="activity_camera_scan_camera_permdialog_message">Camera permission needed to scan Bar/QR Code</string>
+
+    <string name="activity_camera_scan_camera_savedialog_title">Unsaved Changes</string>
+    <string name="activity_camera_scan_camera_savedialog_message">You have unsaved changes which will be discarded. Continue?</string>
 </resources>
