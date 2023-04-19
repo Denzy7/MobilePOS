@@ -1,18 +1,10 @@
 package com.denzygames.mobilepos
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
-import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.room.*
 import com.denzygames.mobilepos.databinding.ActivityProductsBinding
 
@@ -25,20 +17,6 @@ data class Product(
     @ColumnInfo(name = "ProductStock") var productStock: Int?,
     @ColumnInfo(name = "ProductCode") var productCode: String?,
 )
-
-class ScanContract : ActivityResultContract<Unit, String?>()
-{
-    override fun createIntent(context: Context, input: Unit): Intent {
-        return Intent(context, CameraScan::class.java)
-    }
-
-    override fun parseResult(resultCode: Int, intent: Intent?): String? {
-        val data = intent?.getStringExtra("ScanResult")
-        return if (resultCode == Activity.RESULT_OK && data != null) data
-        else null
-    }
-
-}
 
 /* DB access object that abstacts low level queries */
 @Dao
@@ -63,41 +41,9 @@ interface ProductDao{
 }
 
 class Products : AppCompatActivity() {
-
-    companion object
-    {
-        private val NEEDED_PERMISSIONS =
-            mutableListOf(
-                android.Manifest.permission.CAMERA
-            ).toTypedArray()
-        private  const val REQUEST_CODE = 0x07
-    }
-
     private lateinit var viewBinding: ActivityProductsBinding
     private var currentID: Int = 1
     private var dirty: Boolean = false
-
-    fun permissionCameraGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(baseContext, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-    }
-
-    fun needCameraPermissionDialog()
-    {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.activity_camera_scan_camera_permdialog_title)
-        builder.setMessage(R.string.activity_camera_scan_camera_permdialog_message)
-        builder.setIcon(android.R.drawable.ic_dialog_alert)
-        builder.setPositiveButton("Yes"){ _, _ ->
-            ActivityCompat.requestPermissions(this,
-                NEEDED_PERMISSIONS, REQUEST_CODE)
-        }
-        builder.setNegativeButton("No"){_, _ -> }
-        builder.setNeutralButton("Cancel"){_, _ ->}
-
-        val dialog = builder.create()
-        dialog.setCancelable(true)
-        dialog.show()
-    }
 
     fun proceedWithUnsavedChangesDialog(): Boolean
     {
@@ -166,7 +112,6 @@ class Products : AppCompatActivity() {
             Toast.makeText(this, "SAVE SUCCESS!",Toast.LENGTH_SHORT).show()
         }
 
-
         viewBinding.btNext.setOnClickListener{
             if(dirty && !proceedWithUnsavedChangesDialog())
                 return@setOnClickListener
@@ -179,7 +124,6 @@ class Products : AppCompatActivity() {
             {
                 Toast.makeText(this,"No products saved!", Toast.LENGTH_SHORT).show()
             }
-
         }
 
         viewBinding.btPrevious.setOnClickListener{
@@ -197,13 +141,7 @@ class Products : AppCompatActivity() {
         }
 
         viewBinding.btScan.setOnClickListener{
-            if(permissionCameraGranted())
-            {
-                startScanContract.launch(Unit)
-            }else
-            {
-                needCameraPermissionDialog()
-            }
+            startScanContract.launch(Unit);
         }
     }
 
@@ -216,29 +154,5 @@ class Products : AppCompatActivity() {
         }
         else
             Toast.makeText(this, "Scan cancelled", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode)
-        {
-            REQUEST_CODE ->
-            {
-                if((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED))
-                {
-                    /* granted */
-                    startScanContract.launch(Unit)
-                }else
-                {
-                    /* not granted 😢 */
-                    Toast.makeText(this, "Camera permission has been explicitly denied! Manually grant it in app info",Toast.LENGTH_LONG).show()
-                }
-                return
-            }
-        }
     }
 }
