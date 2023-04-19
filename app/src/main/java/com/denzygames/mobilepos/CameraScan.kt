@@ -1,10 +1,14 @@
 package com.denzygames.mobilepos
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import  androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED
 import androidx.camera.mlkit.vision.MlKitAnalyzer
 import androidx.camera.view.LifecycleCameraController
@@ -41,6 +45,18 @@ class CameraScan : AppCompatActivity() {
                 finish()
             }
         }
+
+        viewBinding.textView.setOnClickListener{
+            if(retCode != "")
+            {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(ClipData.newPlainText("", retCode))
+                //toast for <= A12
+                if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
+                    Toast.makeText(this, "Copied \"${retCode}\" to clipboard", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
