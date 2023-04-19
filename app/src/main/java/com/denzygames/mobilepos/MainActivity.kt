@@ -6,12 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.denzygames.mobilepos.databinding.ActivityMainBinding
-import androidx.room.*;
+import androidx.room.*
 
-@Database(entities = [Product::class], version = 1)
+@Database(entities = [Product::class, Sale::class, SaleDetails::class], version = 1)
 abstract class MobilePOSDb: RoomDatabase()
 {
     abstract fun productDao(): ProductDao
+    abstract fun saleDao(): SaleDao
 
     /*
     we want to initalize the db once
@@ -20,7 +21,7 @@ abstract class MobilePOSDb: RoomDatabase()
      */
     companion object{
         private var db: MobilePOSDb? = null
-        private val appDbName = "MobilePOSDb"
+        private const val appDbName = "MobilePOSDb"
         fun getDb(context: Context): MobilePOSDb{
             if(db == null)
             {
@@ -28,7 +29,9 @@ abstract class MobilePOSDb: RoomDatabase()
                     context,
                     MobilePOSDb::class.java,
                     appDbName
-                ).allowMainThreadQueries().build()
+                )
+                    .allowMainThreadQueries()
+                    .build()
             }
             return db!!
         }
@@ -43,9 +46,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(viewBinding.root)
 
         viewBinding.btProducts.setOnClickListener{
-            Toast.makeText(this,"Launch Products", Toast.LENGTH_SHORT).show()
-            val intent = Intent(it.context,Products::class.java)
-            startActivity(intent)
+            //Toast.makeText(this,"Launch Products", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(it.context,Products::class.java))
+        }
+
+        viewBinding.btSell.setOnClickListener{
+            //Toast.makeText(this,"Launch Sell", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(it.context, Sell::class.java))
         }
     }
 }

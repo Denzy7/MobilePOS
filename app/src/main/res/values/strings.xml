@@ -21,4 +21,8 @@
 
     <string name="activity_camera_scan_camera_savedialog_title">Unsaved Changes</string>
     <string name="activity_camera_scan_camera_savedialog_message">You have unsaved changes which will be discarded. Continue?</string>
+
+    <string name="activity_sell_done">Done</string>
+    <string name="activity_sell_cash">Cash</string>
+
 </resources>
