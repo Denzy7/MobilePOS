@@ -13,8 +13,8 @@ import com.denzygames.mobilepos.databinding.ActivityProductsBinding
 data class Product(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = "ProductName") var productName: String?,
-    @ColumnInfo(name = "ProductPrice") var productPrice: Int?,
-    @ColumnInfo(name = "ProductStock") var productStock: Int?,
+    @ColumnInfo(name = "ProductPrice") var productPrice: Int,
+    @ColumnInfo(name = "ProductStock") var productStock: Int,
     @ColumnInfo(name = "ProductCode") var productCode: String?,
 )
 
@@ -28,7 +28,7 @@ interface ProductDao{
     fun getProductByID(id: Int): Product
 
     @Query("SELECT * FROM Product WHERE ProductCode= (:code)")
-    fun getProductByCode(code: String): Product
+    fun getProductByCode(code: String): Product?
 
     @Insert
     fun insertProduct(product: Product)
