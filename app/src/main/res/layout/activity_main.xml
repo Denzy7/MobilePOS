@@ -7,11 +7,13 @@
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:id="@+id/llProductsSell"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
+        android:layout_weight="1"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,6 +23,7 @@
             android:id="@+id/btProducts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="4dp"
             android:layout_weight="1"
             android:text="@string/activity_main_products" />
 
@@ -28,7 +31,36 @@
             android:id="@+id/btSell"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="4dp"
             android:layout_weight="1"
             android:text="@string/activity_main_sell" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llProductsSell">
+
+        <Button
+            android:id="@+id/btReports"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:text="@string/activity_main_reports" />
+
+        <Button
+            android:id="@+id/btExit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:text="@string/activity_main_exit" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

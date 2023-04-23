@@ -2,6 +2,8 @@
     <string name="app_name">Mobile POS</string>
     <string name="activity_main_sell">Sell</string>
     <string name="activity_main_products">Products</string>
+    <string name="activity_main_reports">Report</string>
+    <string name="activity_main_exit">Exit</string>
 
     <string name="activity_product_name">Name</string>
     <string name="activity_product_price">Price</string>

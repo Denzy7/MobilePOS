@@ -13,7 +13,7 @@ data class Sale (
     var saleTotal: Int,
     var salePaid: Int?,
     var saleChange: Int?,
-    var saleDate: Int?, /* UNIX timestamp */
+    var saleDate: Int, /* UNIX timestamp */
 )
 
 @Entity

@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.denzygames.mobilepos.databinding.ActivityMainBinding
 import androidx.room.*
 
@@ -53,6 +54,22 @@ class MainActivity : AppCompatActivity() {
         viewBinding.btSell.setOnClickListener{
             //Toast.makeText(this,"Launch Sell", Toast.LENGTH_SHORT).show()
             startActivity(Intent(it.context, Sell::class.java))
+        }
+
+        viewBinding.btReports.setOnClickListener {
+            //Toast.makeText(this,"Launch Reports", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(it.context, Reports::class.java))
+        }
+
+        viewBinding.btExit.setOnClickListener {
+            Toast.makeText(this, System.currentTimeMillis().toString(), Toast.LENGTH_LONG).show()
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Exit?");
+            builder.setMessage("Are you sure?")
+            builder.setPositiveButton("Yes"){_, _ -> finish()}
+            builder.setNegativeButton("No") {_, _ -> }
+            builder.setIcon(android.R.drawable.ic_dialog_alert);
+            builder.create().show()
         }
     }
 }

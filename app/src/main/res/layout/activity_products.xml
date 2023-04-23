@@ -22,12 +22,14 @@
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:text="@string/activity_product_name" />
 
         <EditText
             android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:ems="10"
             android:minHeight="48dp" />
     </LinearLayout>
@@ -48,12 +50,14 @@
             android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:text="@string/activity_product_price" />
 
         <EditText
             android:id="@+id/etPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:ems="10"
             android:minHeight="48dp" />
     </LinearLayout>
@@ -74,12 +78,14 @@
             android:id="@+id/tvStock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:text="@string/activity_product_stock" />
 
         <EditText
             android:id="@+id/etStock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:ems="10"
             android:minHeight="48dp" />
     </LinearLayout>
@@ -100,6 +106,7 @@
             android:id="@+id/tvCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:text="@string/activity_product_code" />
 
         <EditText
@@ -107,7 +114,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:minHeight="48dp"/>
+            android:minHeight="48dp"
+            android:layout_margin="4dp" />
     </LinearLayout>
 
     <Button
@@ -141,18 +149,21 @@
             android:id="@+id/btAdd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:text="@string/activity_product_add" />
 
         <Button
             android:id="@+id/btSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:text="@string/activity_product_save" />
 
         <Button
             android:id="@+id/btDelete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:enabled="false"
             android:text="@string/activity_product_delete" />
     </LinearLayout>
@@ -174,18 +185,21 @@
             android:id="@+id/btPrevious"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:text="@string/activity_product_previous" />
 
         <TextView
             android:id="@+id/tvCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/activity_product_count_default"/>
+            android:layout_margin="4dp"
+            android:text="@string/activity_product_count_default" />
 
         <Button
             android:id="@+id/btNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:text="@string/activity_product_next" />
     </LinearLayout>
 
