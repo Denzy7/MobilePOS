@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewBinding.btExit.setOnClickListener {
-            Toast.makeText(this, System.currentTimeMillis().toString(), Toast.LENGTH_LONG).show()
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Exit?");
             builder.setMessage("Are you sure?")
