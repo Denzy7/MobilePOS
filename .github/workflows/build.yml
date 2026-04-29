@@ -1,0 +1,129 @@
+name: Build APK
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - name: "android"
+            os: ubuntu-22.04
+            shell: bash
+
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell}} {0}
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: apk
+        env:
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE" > ks
+          openssl base64 -A -d -in ks -out ks_dec
+          echo "storeFile=$(pwd)/ks_dec" > signing.properties
+          echo "storePassword=$ANDROID_KEYSTORE_PASSWORD" >> signing.properties
+          echo "keyAlias=$ANDROID_KEYSTORE_ALIAS" >> signing.properties
+          echo "keyPassword=$ANDROID_KEYSTORE_PASSWORD" >> signing.properties
+
+          chmod +x ./gradlew
+          ./gradlew --no-daemon build
+
+      - name: zip all apks
+        run: |
+          zip apks.zip  $(find ./app/build/outputs -iname '*.apk')
+
+      - name: all_android apks
+        uses: actions/upload-artifact@v4
+        with:
+          name: all_android_apks
+          path: apks.zip
+
+      - name: android build universal
+        uses: actions/upload-artifact@v4
+        with:
+          name: android_universal_debug
+          path: ./app/build/outputs/apk/debug/app-universal-debug.apk
+
+      - name: android build armebi-v7a
+        if: matrix.name == 'android'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android_armebi-v7a_debug
+          path: ./app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk
+
+      - name: android build arm64-v8a
+        if: matrix.name == 'android'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android_arm64-v8a_debug
+          path: ./app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+
+      - name: android build x86
+        uses: actions/upload-artifact@v4
+        with:
+          name: android_x86_debug
+          path: ./app/build/outputs/apk/debug/app-x86-debug.apk
+
+      - name: android build x86_64
+        uses: actions/upload-artifact@v4
+        with:
+          name: android_x86_64_debug
+          path: ./app/build/outputs/apk/debug/app-x86_64-debug.apk
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: rel
+
+
+      - name: cleanup
+        run: |
+          rm $(find -iname '*.apk')
+          unzip -j rel/all_android_apks/apks.zip -d rel
+          rm rel/all_android_apks/apks.zip
+
+      - name: github sha
+        run: |
+          echo ${{ github.sha }} > rel/github.sha
+
+      - name: release files list
+        run: |
+          ls rel/**
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            rel/**
